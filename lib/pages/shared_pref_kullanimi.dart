@@ -27,18 +27,15 @@ class _SharedPreferenceKullanimiState extends State<SharedPreferenceKullanimi> {
               decoration: InputDecoration(labelText: "Adinizi Giriniz"),
             ),
           ),
-          _buildRadioListTiles("Kadin", Cinsiyet.KADIN),
-          _buildRadioListTiles("Erkek", Cinsiyet.ERKEK),
-          _buildRadioListTiles("Diger", Cinsiyet.DIGER),
+          for (var item in Cinsiyet.values)
+            _buildRadioListTiles(describeEnum(item), item),
           //Ayirici Cizgi
           const Divider(
             color: Colors.grey,
             thickness: 2,
           ),
-          _buildCheckboxListTiles(Renkler.KIRMIZI),
-          _buildCheckboxListTiles(Renkler.MAVI),
-          _buildCheckboxListTiles(Renkler.SARI),
-          _buildCheckboxListTiles(Renkler.YESIL),
+          for (var item in Renkler.values) _buildCheckboxListTiles(item),
+
           SwitchListTile(
             title: const Text("Ogenci misin"),
             value: ogrenciMi,
