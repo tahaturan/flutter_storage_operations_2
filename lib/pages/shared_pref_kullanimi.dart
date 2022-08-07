@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_storage_operations_2/model/my_models.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferenceKullanimi extends StatefulWidget {
   const SharedPreferenceKullanimi({Key? key}) : super(key: key);
@@ -12,8 +13,16 @@ class SharedPreferenceKullanimi extends StatefulWidget {
 
 class _SharedPreferenceKullanimiState extends State<SharedPreferenceKullanimi> {
   var secilenCinsiyet = Cinsiyet.KADIN;
-  var secilenRenkler = [];
+  List<String> secilenRenkler = [];
   var ogrenciMi = false;
+  TextEditingController nameController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    verileriOku();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,9 +31,10 @@ class _SharedPreferenceKullanimiState extends State<SharedPreferenceKullanimi> {
       ),
       body: ListView(
         children: [
-          const ListTile(
+          ListTile(
             title: TextField(
-              decoration: InputDecoration(labelText: "Adinizi Giriniz"),
+              controller: nameController,
+              decoration: const InputDecoration(labelText: "Adinizi Giriniz"),
             ),
           ),
           for (var item in Cinsiyet.values)
@@ -46,7 +56,9 @@ class _SharedPreferenceKullanimiState extends State<SharedPreferenceKullanimi> {
             },
           ),
           TextButton(
-            onPressed: () {},
+            onPressed: () {
+              verileriKaydet();
+            },
             child: const Text(
               "KAYDET",
             ),
@@ -54,6 +66,24 @@ class _SharedPreferenceKullanimiState extends State<SharedPreferenceKullanimi> {
         ],
       ),
     );
+  }
+
+  void verileriKaydet() async {
+    final name = nameController.text;
+    final preferences = await SharedPreferences.getInstance();
+    preferences.setString("isim", name);
+    preferences.setBool("ogrenci", ogrenciMi);
+    preferences.setInt("cinsiyet", secilenCinsiyet.index);
+    preferences.setStringList("renkler", secilenRenkler);
+  }
+
+  void verileriOku() async {
+    final preferences = await SharedPreferences.getInstance();
+    nameController.text = preferences.getString("isim") ?? "";
+    ogrenciMi = preferences.getBool("ogrenci") ?? false;
+    secilenCinsiyet = Cinsiyet.values[preferences.getInt("cinsiyet") ?? 0];
+    secilenRenkler = preferences.getStringList("renkler") ?? <String>[];
+    setState(() {});
   }
 
   CheckboxListTile _buildCheckboxListTiles(Renkler renk) {
