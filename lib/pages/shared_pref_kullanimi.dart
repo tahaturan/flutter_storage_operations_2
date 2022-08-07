@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_storage_operations_2/model/my_models.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_storage_operations_2/services/shared_pref_services.dart';
 
 class SharedPreferenceKullanimi extends StatefulWidget {
   const SharedPreferenceKullanimi({Key? key}) : super(key: key);
@@ -16,11 +16,13 @@ class _SharedPreferenceKullanimiState extends State<SharedPreferenceKullanimi> {
   List<String> secilenRenkler = [];
   var ogrenciMi = false;
   TextEditingController nameController = TextEditingController();
+  var preferenceService = SharedPreferenceService();
 
   @override
   void initState() {
     super.initState();
     verileriOku();
+    //*sayfa acildigi anda ilk calisan fonskyon oldugu icin en son yaptigimiz degisiklerde anasayfaya yansiyacaktir
   }
 
   @override
@@ -57,7 +59,14 @@ class _SharedPreferenceKullanimiState extends State<SharedPreferenceKullanimi> {
           ),
           TextButton(
             onPressed: () {
-              verileriKaydet();
+              var userInformation = UserInformation(
+                  isim: nameController.text,
+                  cinsiyet: secilenCinsiyet,
+                  renkler: secilenRenkler,
+                  ogrenciMi: ogrenciMi);
+              preferenceService.verileriKaydet(userInformation);
+              //*burada butina basildiginda girilen degerleri yukaridaki degiskenlerimizde tutmustuk ve onlarla kullanicibilgi sinifimizi direk olusturduk
+              //*daha sonra prefenreceservice sinifimizdaki kaydet fonksiyonuna kullanicibilgi nesnemizi gonderdik
             },
             child: const Text(
               "KAYDET",
@@ -66,24 +75,6 @@ class _SharedPreferenceKullanimiState extends State<SharedPreferenceKullanimi> {
         ],
       ),
     );
-  }
-
-  void verileriKaydet() async {
-    final name = nameController.text;
-    final preferences = await SharedPreferences.getInstance();
-    preferences.setString("isim", name);
-    preferences.setBool("ogrenci", ogrenciMi);
-    preferences.setInt("cinsiyet", secilenCinsiyet.index);
-    preferences.setStringList("renkler", secilenRenkler);
-  }
-
-  void verileriOku() async {
-    final preferences = await SharedPreferences.getInstance();
-    nameController.text = preferences.getString("isim") ?? "";
-    ogrenciMi = preferences.getBool("ogrenci") ?? false;
-    secilenCinsiyet = Cinsiyet.values[preferences.getInt("cinsiyet") ?? 0];
-    secilenRenkler = preferences.getStringList("renkler") ?? <String>[];
-    setState(() {});
   }
 
   CheckboxListTile _buildCheckboxListTiles(Renkler renk) {
@@ -113,5 +104,17 @@ class _SharedPreferenceKullanimiState extends State<SharedPreferenceKullanimi> {
         });
       },
     );
+  }
+
+  void verileriOku() async {
+    var info = await preferenceService.verileriOku();
+    nameController.text = info.isim;
+    secilenCinsiyet = info.cinsiyet;
+    secilenRenkler = info.renkler;
+    ogrenciMi = info.ogrenciMi;
+    setState(() {});
+    //*burada preferenceServide sinifimizda verilerioku fonksiyonuna eristik ve info(bilgi) adinda degiskene atadik
+    //*daha sorna yukaridaki degiskenlerimizi kaydettigimiz son verilerle degistirdik
+    //*setState diyerek ekranin guncellenmesini sagladik
   }
 }
