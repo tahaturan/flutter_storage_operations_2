@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_storage_operations_2/model/my_models.dart';
-import 'package:flutter_storage_operations_2/services/secure_stroge.dart';
+import 'package:flutter_storage_operations_2/services/file_storage.dart';
 
 class SharedPreferenceKullanimi extends StatefulWidget {
   const SharedPreferenceKullanimi({Key? key}) : super(key: key);
@@ -16,7 +16,7 @@ class _SharedPreferenceKullanimiState extends State<SharedPreferenceKullanimi> {
   List<String> secilenRenkler = [];
   var ogrenciMi = false;
   TextEditingController nameController = TextEditingController();
-  var preferenceService = SecureStorageService();
+  var preferenceService = FileStorageService();
 
   @override
   void initState() {
