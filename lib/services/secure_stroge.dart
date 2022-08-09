@@ -2,9 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_storage_operations_2/model/my_models.dart';
+import 'package:flutter_storage_operations_2/services/local_storage_service.dart';
 
-class SecureStorageService {
-  void verileriKaydet(UserInformation userInformation) async {
+class SecureStorageService implements LocalStorageService {
+  @override
+  Future<void> verileriKaydet(UserInformation userInformation) async {
     const preferences = FlutterSecureStorage();
     await preferences.write(key: "isim", value: userInformation.isim);
     await preferences.write(
@@ -15,6 +17,7 @@ class SecureStorageService {
         key: "renkler", value: jsonEncode(userInformation.renkler));
   }
 
+  @override
   Future<UserInformation> verileriOku() async {
     const preferences = FlutterSecureStorage();
 

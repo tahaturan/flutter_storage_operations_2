@@ -1,9 +1,11 @@
 import 'package:flutter_storage_operations_2/model/my_models.dart';
+import 'package:flutter_storage_operations_2/services/local_storage_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 //*veritabani islmelerimizi widget kodlarimizdan ayirdik boylelikle daha okunabilir bir kod elde ettik
 
-class SharedPreferenceService {
-  void verileriKaydet(UserInformation userInformation) async {
+class SharedPreferenceService implements LocalStorageService {
+  @override
+  Future<void> verileriKaydet(UserInformation userInformation) async {
     //*olusturdugumuz kullanicibilgisi turunde bir nesne alacak dedik burasi
     final preferences = await SharedPreferences.getInstance();
     //*ve tek tek model sinifimiza gelen verileri dogru sekilde kaydettik
@@ -15,6 +17,7 @@ class SharedPreferenceService {
     //*boylelikle verilerimiz saklanmsi olacak ve uygulama kapatildiginda silinmemis olacak
   }
 
+  @override
   Future<UserInformation> verileriOku() async {
     final preferences = await SharedPreferences.getInstance();
     //*kaydettigimiz verileri key olarak degerlerini almak istedik ?? anlami null gelirsedir null gelirsede by degeri kullan demis olduk

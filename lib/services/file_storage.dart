@@ -3,9 +3,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_storage_operations_2/model/my_models.dart';
+import 'package:flutter_storage_operations_2/services/local_storage_service.dart';
 import 'package:path_provider/path_provider.dart';
 
-class FileStorageService {
+class FileStorageService implements LocalStorageService {
   _getFilePath() async {
     var filePath = await getApplicationDocumentsDirectory();
     return filePath.path;
@@ -20,11 +21,13 @@ class FileStorageService {
     return file;
   }
 
-  void verileriKaydet(UserInformation userInformation) async {
+  @override
+  Future<void> verileriKaydet(UserInformation userInformation) async {
     var file = await _createFile();
     await file.writeAsString(jsonEncode(userInformation));
   }
 
+  @override
   Future<UserInformation> verileriOku() async {
     try {
       var file = await _createFile();
